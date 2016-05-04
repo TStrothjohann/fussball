@@ -3,6 +3,9 @@ var request = require("request");
 var lastImported = "05 01 2016";
 var teamDataUrl = 'http://phpscripts.zeit.de/fb_fwm/fb_mbl/feed/s2015/config/de/dpa/teams.json';
 var teamData = fs.readFileSync('cache/teamData.json', 'utf8');
+var liveScoreURL = "http://phpscripts.zeit.de/fb_fwm/fb_mbl/feed/s2015/md3/dpa/onl1.json";
+var currentLiveDataTime = "05 01 2016";
+var delay = 10000;
 
 function refreshTeamData(url, date) {
   var inputDate = new Date(date);
@@ -55,21 +58,25 @@ function processData(err, data){
   buildRound(parsedData.fixture);
 }
 
-if(teamData && teamData !== ""){
-  fs.readFile('../feed/s2015/md3/dpa/onl1.json', 'utf8', processData);
-}else{
-  refreshTeamData(teamDataUrl, lastImported);
+
+
+function checkLiveData(url){
+  request(url, function(error, response, body) {
+    var liveData = JSON.parse(body);
+    if(currentLiveDataTime === liveData.lastModified){
+      console.log('aktuell');
+      return;
+    }else{
+      console.log('news!');
+      if(teamData && teamData !== ""){
+        fs.readFile('../feed/s2015/md3/dpa/onl1.json', 'utf8', processData);
+      }else{
+        refreshTeamData(teamDataUrl, lastImported);
+      }
+      currentLiveDataTime = liveData.lastModified;
+    }
+
+  });
 }
 
-// request("http://phpscripts.zeit.de/fb_fwm/fb_mbl/feed/s2015/md3/dpa/onl1.json", function(error, response, body) {
-//   var body1 = JSON.parse(body);
-//   var body2;
-//   request("http://phpscripts.zeit.de/fb_fwm/fb_mbl/feed/s2015/md3/dpa/onl1.json", function(error, response, bodynew) {
-//     body2 = JSON.parse(bodynew);
-
-//       console.log(body1.lastModified, body2.lastModified);
-    
-
-//   });
-
-// });
+setInterval(checkLiveData, delay, liveScoreURL);
