@@ -1,0 +1,15 @@
+{
+  "name": "em2016",
+  "version": "1.0.0",
+  "description": "ZON em tool",
+  "main": "main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node main.js"
+  },
+  "author": "Thomas Strothjohann",
+  "license": "ISC",
+  "dependencies": {
+    "node-xml": "^1.0.2"
+  }
+}
