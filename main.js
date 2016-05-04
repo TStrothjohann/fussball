@@ -1,45 +1,31 @@
-var xml = require("./node_modules/node-xml");
 var fs = require('fs');
+var request = require("request");
+var lastImported = "05 01 2016";
+var teamDataUrl = 'http://phpscripts.zeit.de/fb_fwm/fb_mbl/feed/s2015/config/de/dpa/teams.json';
+var teamData = fs.readFileSync('cache/teamData.json', 'utf8');
 
-
-
-var parser = new xml.SaxParser(function(cb) {
-  cb.onStartDocument(function() {
-    console.log("started reading doc");
-  });
-  cb.onEndDocument(function() {
-
-  });
-  cb.onStartElementNS(function(elem, attrs, prefix, uri, namespaces) {
-      console.log("=> Started: " + elem + " uri="+uri +" (Attributes: " + JSON.stringify(attrs) + " )");
-  });
-  cb.onEndElementNS(function(elem, prefix, uri) {
-      console.log("<= End: " + elem + " uri="+uri + "\n");
-         parser.pause();// pause the parser
-         setTimeout(function (){parser.resume();}, 200); //resume the parser
-  });
-  cb.onCharacters(function(chars) {
-      //console.log('<CHARS>'+chars+"</CHARS>");
-  });
-  cb.onCdata(function(cdata) {
-      console.log('<CDATA>'+cdata+"</CDATA>");
-  });
-  cb.onComment(function(msg) {
-      console.log('<COMMENT>'+msg+"</COMMENT>");
-  });
-  cb.onWarning(function(msg) {
-      console.log('<WARNING>'+msg+"</WARNING>");
-  });
-  cb.onError(function(msg) {
-      console.log('<ERROR>'+JSON.stringify(msg)+"</ERROR>");
-  });
-});
-
-//parser.parseFile("../feed/s2015/md9/de/dpa/29_onl1.xml");
-var teamData = JSON.parse( fs.readFileSync('../feed/s2015/config/de/dpa/teams.json', 'utf8') );
+function refreshTeamData(url, date) {
+  var inputDate = new Date(date);
+  var todaysDate = new Date();
+  
+  if(inputDate.setHours(0,0,0,0) < todaysDate.setHours(0,0,0,0) ){
+    request
+      .get(url)
+      .on('error', function(error){
+        console.log(error)
+        })
+      .on('response', function(response) {
+          console.log(response.statusCode)  
+        })
+      .pipe(fs.createWriteStream('cache/teamData.json'))
+    lastImported = todaysDate.setHours(0,0,0,0).toString();
+  }
+}
 
 function getTeamName(teamId){
-  
+  refreshTeamData(teamDataUrl, lastImported);
+  var teamJsonData = JSON.parse(teamData);
+
   function matchTeamName(data){
     var teamName;
 
@@ -50,7 +36,7 @@ function getTeamName(teamId){
         }
     return teamName;    
   }
-  return matchTeamName(teamData);
+  return matchTeamName(teamJsonData);
 }
 
 function buildRound(data){
@@ -69,4 +55,21 @@ function processData(err, data){
   buildRound(parsedData.fixture);
 }
 
-fs.readFile('../feed/s2015/md3/dpa/onl1.json', 'utf8', processData);
+if(teamData && teamData !== ""){
+  fs.readFile('../feed/s2015/md3/dpa/onl1.json', 'utf8', processData);
+}else{
+  refreshTeamData(teamDataUrl, lastImported);
+}
+
+// request("http://phpscripts.zeit.de/fb_fwm/fb_mbl/feed/s2015/md3/dpa/onl1.json", function(error, response, body) {
+//   var body1 = JSON.parse(body);
+//   var body2;
+//   request("http://phpscripts.zeit.de/fb_fwm/fb_mbl/feed/s2015/md3/dpa/onl1.json", function(error, response, bodynew) {
+//     body2 = JSON.parse(bodynew);
+
+//       console.log(body1.lastModified, body2.lastModified);
+    
+
+//   });
+
+// });
