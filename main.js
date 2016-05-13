@@ -73,6 +73,7 @@ function checkLiveData(url){
       }else{
         refreshTeamData(teamDataUrl, lastImported);
       }
+      buildRound(liveData.fixture);
       currentLiveDataTime = liveData.lastModified;
     }
 
