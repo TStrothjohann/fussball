@@ -12,7 +12,6 @@ HTTPrequest.onload = function() {
     }
   } else {
     // We reached our target server, but it returned an error
-
   }
 };
 
