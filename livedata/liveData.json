@@ -1,0 +1,53 @@
+{
+  "games": {
+    "liveGames": [
+      {
+        "status": "LIVE",
+        "time": "05 05 2015, 18:30",
+        "teamHome": "Eintracht Frankfurt",
+        "teamAway": "Dynamo Dresden",
+        "scoreTeamHome": {
+          "total": 2,
+          "firstHalf": 0 
+        },
+        "scoreTeamAway" : {
+          "total": 1,
+          "firstHalf": 1
+        }
+      }
+    ],
+    "upcomingGames": [
+      {
+        "status": "PRE-MATCH",
+        "time": "05 05 2015, 18:30",
+        "teamHome": "Eintracht Frankfurt",
+        "teamAway": "Dynamo Dresden",
+        "scoreTeamHome": {
+          "total": 2,
+          "firstHalf": 0 
+        },
+        "scoreTeamAway" : {
+          "total": 1,
+          "firstHalf": 1
+        }
+      }
+
+    ],
+    "finishedGames": [
+      {
+        "status": "FULL",
+        "time": "05 05 2015, 18:30",
+        "teamHome": "Eintracht Frankfurt",
+        "teamAway": "Dynamo Dresden",
+        "scoreTeamHome": {
+          "total": 2,
+          "firstHalf": 0 
+        },
+        "scoreTeamAway" : {
+          "total": 1,
+          "firstHalf": 1
+        }
+      }
+    ]      
+  }
+}
